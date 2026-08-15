@@ -1,0 +1,50 @@
+<p>
+  Mission: <strong><%= pageTitle %></strong>
+</p>
+
+<p>
+  Player: <strong><%= currentUser.displayName %></strong>
+</p>
+
+<section id="game-overview" class="grid two-columns">
+  <div class="panel-mini">
+    <h2>Progress</h2>
+    <p>Solved questions: <span id="solved-count">0</span>/<span id="total-count">0</span></p>
+    <p>Started at: <span id="started-at">-</span></p>
+    <p>Final answer attempts: <span id="final-attempts">0</span></p>
+  </div>
+  <div class="panel-mini">
+    <h2>Elapsed time</h2>
+    <p><span id="elapsed-timer">00:00</span></p>
+  </div>
+</section>
+
+<section class="panel-mini">
+  <h2>Collected code fragments</h2>
+  <div id="clue-board" class="clue-board" aria-live="polite"></div>
+</section>
+
+<section id="question-section" class="game-section">
+  <h2>Current question</h2>
+  <div id="question-wrapper"></div>
+  <div id="feedback" class="alert" hidden></div>
+  <div id="answer-form-container"></div>
+</section>
+
+<section id="hint-wrap" class="game-section"></section>
+
+<section id="final-form-wrap" class="game-section hidden">
+  <h2>Where to now?</h2>
+  <p>When all questions are solved, enter the final location.</p>
+  <form id="final-form">
+    <label for="final-answer">Final answer:</label>
+    <input id="final-answer" name="final-answer" type="text" autocomplete="off" />
+    <button class="btn" type="submit">Submit</button>
+  </form>
+</section>
+
+<section id="success-screen" class="game-section hidden">
+  <h2>Congratulations</h2>
+  <p>The location is revealed. Mission accomplished!</p>
+  <p>Time: <strong id="success-time"></strong></p>
+</section>

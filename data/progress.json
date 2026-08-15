@@ -1,0 +1,39 @@
+{
+  "users": {
+    "rositsa.nenova@inensia.com": {
+      "userId": "rositsa.nenova@inensia.com",
+      "displayName": "Rositsa",
+      "email": "rositsa.nenova@inensia.com",
+      "startedAt": "2026-08-12T08:23:11.737Z",
+      "currentQuestionId": "q3",
+      "solvedQuestions": [
+        "q1",
+        "q2"
+      ],
+      "attemptsByQuestion": {
+        "q1": 2,
+        "q2": 1,
+        "q3": 2
+      },
+      "wrongAnswersByQuestion": {
+        "q1": [
+          "отговор a"
+        ],
+        "q3": [
+          "[\"Добре дошли\"]",
+          "[\"Който за който\"]"
+        ]
+      },
+      "hintsUsed": {
+        "q3": true
+      },
+      "unlockedClues": [
+        "Т",
+        "АИНА"
+      ],
+      "completedAt": null,
+      "finalAnswerAttempts": 0,
+      "finalCorrectAt": null
+    }
+  }
+}

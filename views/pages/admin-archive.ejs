@@ -1,0 +1,71 @@
+<%- include("../partials/admin-nav") %>
+
+<section class="panel">
+  <h2>Archive and export</h2>
+  <p class="section-subtitle">Export questions, results, and full backups as needed.</p>
+
+  <div class="admin-actions-row">
+    <a class="btn" href="/admin/archive/export/questions">Export questions (JSON)</a>
+    <a class="btn" href="/admin/archive/results.csv">Export results (CSV)</a>
+    <a class="btn" href="/admin/backup">Download full backup</a>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Import questions</h2>
+  <p class="section-subtitle">Supports <strong>[...]</strong> or <strong>{ "questions": [...] }</strong> formats.</p>
+  <form method="POST" action="/admin/archive/import/questions" class="field">
+    <label for="payload">JSON content</label>
+    <textarea id="payload" name="payload" rows="10" placeholder='{"questions":[...]}'></textarea>
+    <small class="field-hint">If the imported data is invalid, nothing will be changed.</small>
+    <div class="form-actions">
+      <button class="btn" type="submit">Import</button>
+    </div>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Admin log</h2>
+  <p class="section-subtitle">Latest actions: <strong><%= auditsCount %></strong>.</p>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>When</th>
+          <th>Admin</th>
+          <th>Action</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% audits.forEach((entry) => { %>
+          <tr>
+            <td><%= entry.at %></td>
+            <td><%= entry.adminEmail %></td>
+            <td><%= entry.action %></td>
+            <td><%= JSON.stringify(entry.details) %></td>
+          </tr>
+        <% }) %>
+        <% if (audits.length === 0) { %>
+          <tr>
+            <td colspan="4">No actions logged yet.</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Game reset</h2>
+  <p class="section-subtitle">Player progress and results for all participants will be removed; questions and game configuration remain.</p>
+  <form method="POST" action="/admin/game-reset" onsubmit="return confirm('This action is irreversible and will delete all players&apos; progress. Continue?');">
+    <label for="game-reset-confirmation">Confirmation</label>
+    <input id="game-reset-confirmation" type="text" name="confirm" placeholder="RESET" required />
+    <small class="field-hint">Type RESET to confirm.</small>
+    <div class="form-actions">
+      <button class="btn btn-danger" type="submit">Reset game</button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,63 @@
+<%
+  const formatElapsed = (value) => {
+    if (value === null || value === undefined) {
+      return "-";
+    }
+
+    const totalSeconds = Math.floor(Number(value) / 1000);
+    if (!Number.isFinite(totalSeconds) || totalSeconds < 0) {
+      return "-";
+    }
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    const base = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    return hours > 0 ? `${String(hours).padStart(2, "0")} ${base}` : base;
+  };
+%>
+<%- include("../partials/admin-nav") %>
+
+<section class="panel">
+  <h2>Leaderboard</h2>
+  <p class="section-subtitle">Sorting: solved questions, fewer wrong answers, fewer hints, and faster completion.</p>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width: 80px">Rank</th>
+          <th>Participant</th>
+          <th>Email</th>
+          <th class="numeric">Solved</th>
+          <th class="numeric">Wrong</th>
+          <th class="numeric">Hints</th>
+          <th>Elapsed time</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% leaderboard.forEach((entry) => { %>
+          <tr>
+            <td class="numeric"><%= entry.ranking %></td>
+            <td><%= entry.displayName %></td>
+            <td><%= entry.email %></td>
+            <td class="numeric"><%= entry.solvedQuestions %></td>
+            <td class="numeric"><%= entry.wrongAnswers %></td>
+            <td class="numeric"><%= entry.hintsUsed %></td>
+            <td><%= formatElapsed(entry.elapsedMs) %></td>
+            <td>
+              <span class="pill <%= entry.correctFinal ? "pill-on" : "pill-pending" %>">
+                <%= entry.correctFinal ? "Solved" : "In progress" %>
+              </span>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if (isPublic) { %>
+    <p><a class="btn btn-small" href="/">Back to home</a></p>
+  <% } %>
+</section>

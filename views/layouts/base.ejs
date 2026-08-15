@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= title %> | Location Guessing Game</title>
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+<%
+  const isAdminPage = content?.startsWith?.("pages/admin");
+  const pageName = content === "pages/game"
+    ? "game"
+    : content === "pages/home"
+      ? "home"
+      : isAdminPage
+        ? `admin-${content.replace("pages/", "")}`
+        : "other";
+%>
+<body data-page="<%= pageName %>">
+  <%- include("../partials/header", { currentUser }) %>
+  <main class="page">
+    <section class="panel">
+      <h1><%= pageTitle %></h1>
+      <%
+        const renderStatusCode = typeof statusCode === "number" ? statusCode : 500;
+        const renderMessage = typeof message === "string" ? message : "An unexpected error occurred.";
+      %>
+      <%- include(`../${content}`, {
+        currentUser,
+        statusCode: renderStatusCode,
+        message: renderMessage,
+      }) %>
+    </section>
+  </main>
+  <%- include("../partials/footer") %>
+  <script src="/js/app.js"></script>
+</body>
+</html>

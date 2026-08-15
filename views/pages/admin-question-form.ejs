@@ -1,0 +1,87 @@
+<%- include("../partials/admin-nav") %>
+
+<form method="POST" action="<%= submitAction %>" class="panel">
+  <h2><%= question ? "Edit question" : "Add question" %></h2>
+  <p class="section-subtitle">Supports <strong>singleChoice</strong>, <strong>multipleChoice</strong> and <strong>text</strong>.</p>
+
+  <div class="field">
+    <label for="question">Question text</label>
+    <textarea id="question" name="question" required><%= question ? question.question : "" %></textarea>
+    <small class="field-hint">Keep it clear and concise. Maximum length is 2000 characters.</small>
+  </div>
+
+  <div class="field">
+    <label for="type">Question type</label>
+    <select id="type" name="type" required>
+      <% questionTypes.forEach((questionType) => { %>
+        <option value="<%= questionType %>" <%= question && question.type === questionType ? "selected" : "" %>><%= questionType %></option>
+      <% }) %>
+    </select>
+    <small class="field-hint">Type determines which fields are used for validation and scoring.</small>
+  </div>
+
+  <div class="field">
+    <label for="options">Possible answers (one line each)</label>
+    <textarea id="options" name="options" placeholder="Enter one option per line"><%= question && question.options ? question.options.join("\n") : "" %></textarea>
+    <small class="field-hint">Used for singleChoice and multipleChoice. Empty lines are ignored.</small>
+  </div>
+
+  <div class="field">
+    <label for="correctAnswer">Single correct answer</label>
+    <input id="correctAnswer" name="correctAnswer" type="text" value="<%= question && question.correctAnswer ? question.correctAnswer : "" %>" />
+    <small class="field-hint">Used for singleChoice.</small>
+  </div>
+
+  <div class="field">
+    <label for="correctAnswers">Correct answers for multiple choice</label>
+    <textarea id="correctAnswers" name="correctAnswers" placeholder="Enter one correct option per line"><%= question && question.correctAnswers ? question.correctAnswers.join("\n") : "" %></textarea>
+    <small class="field-hint">Used for multipleChoice. Each line is one valid correct answer.</small>
+  </div>
+
+  <div class="field">
+    <label for="acceptedAnswers">Accepted text answers</label>
+    <textarea id="acceptedAnswers" name="acceptedAnswers" placeholder="Enter one alias per line"><%= question && question.acceptedAnswers ? question.acceptedAnswers.join("\n") : "" %></textarea>
+    <small class="field-hint">Used for type=text. Answers are normalized (lowercase and trimmed spaces).</small>
+  </div>
+
+  <div class="field">
+    <label for="unlock">Unlock key / fragment</label>
+    <input id="unlock" name="unlock" type="text" value="<%= question ? question.unlock : "" %>" />
+    <small class="field-hint">A piece of the solution unlocked after a correct answer.</small>
+  </div>
+
+  <div class="field">
+    <label for="hint">Hint</label>
+    <textarea id="hint" name="hint"><%= question ? question.hint || "" : "" %></textarea>
+    <small class="field-hint">Shown to participants only after a hint request.</small>
+  </div>
+
+  <div class="field">
+    <label for="explanation">Explanation</label>
+    <textarea id="explanation" name="explanation"><%= question ? question.explanation || "" : "" %></textarea>
+    <small class="field-hint">Admin-only field. Not shown to participants.</small>
+  </div>
+
+  <div class="two-columns form-grid">
+    <div class="field">
+      <label for="maxAttempts">Maximum attempts</label>
+      <input id="maxAttempts" name="maxAttempts" type="number" min="1" value="<%= question ? question.maxAttempts : 3 %>" required />
+    </div>
+    <div class="field">
+      <label for="order">Position</label>
+      <input id="order" name="order" type="number" min="1" value="<%= question ? question.order : 1 %>" />
+    </div>
+  </div>
+
+  <div class="field checkbox-row">
+    <label>
+      <input type="checkbox" name="active" <%= !question || question.active ? "checked" : "" %> />
+      Active in game
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn" type="submit">Save question</button>
+    <a class="btn btn-secondary" href="/admin/questions">Back to list</a>
+  </div>
+</form>

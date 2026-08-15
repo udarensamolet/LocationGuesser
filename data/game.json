@@ -1,0 +1,23 @@
+{
+  "title": "Operation: TeamBuilding Location",
+  "status": "closed",
+  "introduction": "Guess the location for our next Inensia teambuilding :)",
+  "rules": "No rules :)",
+  "startDateTime": "2026-08-12T05:00:00.000Z",
+  "endDateTime": "2026-08-12T17:00:00.000Z",
+  "leaderboardVisible": true,
+  "createdAt": "2026-08-12T00:00:00.000Z",
+  "updatedAt": "2026-08-12T08:25:20.049Z",
+  "secretLocation": "Veliko Tarnovo",
+  "acceptedLocationAnswers": [
+    "Turnovo",
+    "Tarnovo",
+    "Tyrnovo",
+    "V Turnovo",
+    "V Tarnovo",
+    "V Tyrnovo",
+    "Veliko Tarnovo",
+    "Veliko Turnovo",
+    "Veliko Tyrnovo"
+  ]
+}

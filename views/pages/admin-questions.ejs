@@ -1,0 +1,70 @@
+<%- include("../partials/admin-nav") %>
+
+<section class="panel panel-inline">
+  <div>
+    <h2>Questions</h2>
+    <p class="section-subtitle">Manage each question text, status, and ordering.</p>
+  </div>
+  <div class="inline-actions">
+    <a class="btn" href="/admin/questions/new">Add question</a>
+  </div>
+</section>
+
+<form method="POST" action="/admin/questions/reorder" class="panel">
+  <h2>Order and availability</h2>
+  <p class="section-subtitle">Edit the Position column and click Save order.</p>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th style="width: 96px">Position</th>
+          <th>Question</th>
+          <th style="width: 112px">Type</th>
+          <th style="width: 110px">Status</th>
+          <th style="width: 112px" class="numeric">Max attempts</th>
+          <th style="width: 320px">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% questions.forEach((question) => { %>
+          <tr>
+            <td>
+              <input class="admin-order-input" type="number" min="1" name="order:<%= question.id %>" value="<%= question.order %>" />
+            </td>
+            <td><%= question.question %></td>
+            <td><%= question.type %></td>
+            <td>
+              <span class="pill <%= question.active ? "pill-on" : "pill-off" %>">
+                <%= question.active ? "Active" : "Inactive" %>
+              </span>
+            </td>
+            <td class="numeric"><%= question.maxAttempts %></td>
+            <td class="admin-table-actions">
+              <a class="btn btn-small" href="/admin/questions/<%= question.id %>/edit">Edit</a>
+              <form method="POST" action="/admin/questions/<%= question.id %>/toggle" class="inline-form">
+                <input type="hidden" name="active" value="<%= question.active ? "false" : "true" %>" />
+                <button type="submit" class="btn btn-small">
+                  <%= question.active ? "Disable" : "Enable" %>
+                </button>
+              </form>
+              <form
+                method="POST"
+                action="/admin/questions/<%= question.id %>/delete"
+                class="inline-form"
+                onsubmit="return confirm('To delete this question, confirm with RESET.')"
+              >
+                <input class="inline-confirm" type="text" name="confirm" placeholder="RESET" required />
+                <button type="submit" class="btn btn-danger btn-small">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn" type="submit">Save order</button>
+  </div>
+</form>

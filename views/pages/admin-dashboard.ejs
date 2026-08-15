@@ -1,0 +1,28 @@
+<%- include("../partials/admin-nav") %>
+
+<section class="two-columns">
+  <div class="panel-mini">
+    <h2>General overview</h2>
+    <p>Total participants: <strong><%= stats.totalParticipants %></strong></p>
+    <p>Started: <strong><%= stats.startedParticipants %></strong></p>
+    <p>Completed: <strong><%= stats.completedParticipants %></strong></p>
+  </div>
+  <div class="panel-mini">
+    <h2>Progress and status</h2>
+    <p>Average progress: <strong><%= stats.averageProgress %>%</strong></p>
+    <p>Total questions: <strong><%= stats.totalQuestions %></strong></p>
+    <p>Current status: <strong><%= gameStatus %></strong></p>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Quick actions</h2>
+  <p class="section-subtitle">Choose the section matching what you want to manage.</p>
+  <div class="admin-actions-row">
+    <a class="btn" href="/admin/questions">Questions</a>
+    <a class="btn" href="/admin/settings">Settings</a>
+    <a class="btn" href="/admin/participants">Participants</a>
+    <a class="btn" href="/admin/leaderboard">Leaderboard</a>
+    <a class="btn" href="/admin/archive">Archive / Export</a>
+  </div>
+</section>

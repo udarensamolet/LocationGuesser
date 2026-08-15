@@ -1,0 +1,28 @@
+<section class="panel">
+  <h2>Leaderboard</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Participant</th>
+        <th>Solved</th>
+        <th>Wrong</th>
+        <th>Hints</th>
+        <th>Elapsed time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% leaderboard.forEach((entry) => { %>
+        <tr>
+          <td><%= entry.ranking %></td>
+          <td><%= entry.displayName %></td>
+          <td><%= entry.solvedQuestions %></td>
+          <td><%= entry.wrongAnswers %></td>
+          <td><%= entry.hintsUsed %></td>
+          <td><%= entry.elapsedMs ?? "-" %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <p><a href="/">Back to home</a></p>
+</section>

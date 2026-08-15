@@ -1,0 +1,67 @@
+<%- include("../partials/admin-nav") %>
+
+<form method="POST" action="/admin/settings" class="panel">
+  <h2>Game configuration</h2>
+  <p class="section-subtitle">Edit the game description, timing, and completion behavior.</p>
+
+  <div class="field">
+    <label for="title">Game title</label>
+    <input id="title" name="title" type="text" required value="<%= config.title %>" />
+  </div>
+
+  <div class="field">
+    <label for="introduction">Introduction</label>
+    <textarea id="introduction" name="introduction" required><%= config.introduction %></textarea>
+    <small class="field-hint">Displayed on the participant home section.</small>
+  </div>
+
+  <div class="field">
+    <label for="rules">Rules</label>
+    <textarea id="rules" name="rules" required><%= config.rules %></textarea>
+    <small class="field-hint">Use this area for participation rules and timing notes.</small>
+  </div>
+
+  <div class="field">
+    <label for="secretLocation">Secret location</label>
+    <input id="secretLocation" name="secretLocation" type="text" value="<%= config.secretLocation %>" />
+    <small class="field-hint">Hidden from participants and never shown on participant pages.</small>
+  </div>
+
+  <div class="field">
+    <label for="acceptedLocationAnswers">Accepted final answers (one per line)</label>
+    <textarea id="acceptedLocationAnswers" name="acceptedLocationAnswers"><%= config.acceptedLocationAnswers.join("\n") %></textarea>
+    <small class="field-hint">Normalized before matching (trimmed, lower-case, condensed spaces).</small>
+  </div>
+
+  <div class="two-columns form-grid">
+    <div class="field">
+      <label for="startDateTime">Start (Europe/Sofia)</label>
+      <input id="startDateTime" name="startDateTime" type="datetime-local" value="<%= startDateValue %>" />
+    </div>
+    <div class="field">
+      <label for="endDateTime">End (Europe/Sofia)</label>
+      <input id="endDateTime" name="endDateTime" type="datetime-local" value="<%= endDateValue %>" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="status">Status</label>
+    <select id="status" name="status">
+      <% statuses.forEach((status) => { %>
+        <option value="<%= status %>" <%= config.status === status ? "selected" : "" %>><%= status %></option>
+      <% }) %>
+    </select>
+    <small class="field-hint">Controls availability and final answer validation.</small>
+  </div>
+
+  <div class="field checkbox-row">
+    <label>
+      <input type="checkbox" name="leaderboardVisible" <%= config.leaderboardVisible ? "checked" : "" %> />
+      Show leaderboard to participants
+    </label>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn" type="submit">Save settings</button>
+  </div>
+</form>

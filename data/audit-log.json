@@ -1,0 +1,168 @@
+{
+  "entries": [
+    {
+      "at": "2026-08-12T08:20:50.784Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "game_status_change",
+      "details": {
+        "previousStatus": "draft",
+        "status": "active"
+      }
+    },
+    {
+      "at": "2026-08-12T08:20:50.795Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "game_settings_update",
+      "details": {
+        "previousStatus": "draft",
+        "status": "active",
+        "leaderboardVisible": true
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:11.740Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "game_started",
+      "details": {
+        "questionCount": 5
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:17.012Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:19.392Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:29.989Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q2",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:40.812Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q3",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:43.106Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q3",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": true
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:44.349Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q3",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": true
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:47.374Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q3",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": true
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:50.929Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_hint",
+      "details": {
+        "questionId": "q3"
+      }
+    },
+    {
+      "at": "2026-08-12T08:23:56.321Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q3",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": true
+      }
+    },
+    {
+      "at": "2026-08-12T08:25:20.053Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "game_status_change",
+      "details": {
+        "previousStatus": "active",
+        "status": "closed"
+      }
+    },
+    {
+      "at": "2026-08-12T08:25:20.055Z",
+      "adminId": "rositsa.nenova@inensia.com",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "game_settings_update",
+      "details": {
+        "previousStatus": "active",
+        "status": "closed",
+        "leaderboardVisible": true
+      }
+    }
+  ]
+}

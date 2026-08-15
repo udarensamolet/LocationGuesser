@@ -1,0 +1,20 @@
+<header class="site-header">
+  <div class="site-shell">
+    <a href="/" class="brand">
+      <img src="/images/logo.png" alt="Company logo" />
+      <span>Location Guessing Game</span>
+    </a>
+    <p class="user-label">User: <strong>
+        <%= currentUser.displayName %>
+      </strong></p>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/game">Mission</a>
+      <a href="/leaderboard">Leaderboard</a>
+      <% if (currentUser.isAdmin) { %>
+        <a href="/admin">Admin</a>
+        <% } %>
+          <a href="/api/me">My Profile</a>
+    </nav>
+  </div>
+</header>

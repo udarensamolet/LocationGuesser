@@ -1,0 +1,74 @@
+<%- include("../partials/admin-nav") %>
+
+<section class="panel">
+  <h2><%= participant.user.displayName %></h2>
+  <p class="section-subtitle">Identity and session metrics. Reset removes only game progress.</p>
+
+  <div class="two-columns form-grid">
+    <div class="panel-mini">
+      <h3>Identity</h3>
+      <p><strong>Email:</strong> <%= participant.user.email %></p>
+      <p><strong>Started:</strong> <%= participant.progress ? "Yes" : "No" %></p>
+      <p><strong>Registered:</strong> <%= participant.user.joinedAt ? new Date(participant.user.joinedAt).toLocaleString("en-US") : "-" %></p>
+    </div>
+
+    <div class="panel-mini">
+      <h3>Game metrics</h3>
+      <p><strong>Solved:</strong> <%= participant.progress ? participant.progress.solvedQuestions.length : 0 %></p>
+      <p><strong>Wrong answers:</strong> <%= participant.progress ? Object.values(participant.progress.wrongAnswersByQuestion).reduce((sum, value) => sum + value.length, 0) : 0 %></p>
+      <p><strong>Hints:</strong> <%= participant.progress ? Object.values(participant.progress.hintsUsed).filter(Boolean).length : 0 %></p>
+      <p><strong>Total attempts:</strong>
+        <%= participant.progress
+          ? Object.values(participant.progress.attemptsByQuestion).reduce((sum, value) => sum + Number(value), 0)
+          : 0 %>
+      </p>
+      <p><strong>Current question:</strong> <%= participant.progress?.currentQuestionId ?? "-" %></p>
+      <p><strong>Completed at:</strong> <%= participant.progress?.completedAt ?? "-" %></p>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h3>Reset progress</h3>
+  <p class="section-subtitle">Confirmation is required to prevent accidental resets.</p>
+  <form method="POST" action="/admin/participants/<%= participant.user.id || participant.user.userId %>/reset" class="inline-form">
+    <div class="field">
+      <label for="participant-reset-confirmation">Confirmation</label>
+      <input id="participant-reset-confirmation" type="text" name="confirm" placeholder="RESET" required />
+      <small class="field-hint">Type RESET to confirm participant reset.</small>
+      <button class="btn btn-danger" type="submit">Reset progress</button>
+    </div>
+  </form>
+</section>
+
+<section class="panel">
+  <h3>Attempt history</h3>
+  <% if (participant.progress) { %>
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Question ID</th>
+            <th class="numeric">Attempts</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (Object.keys(participant.progress.attemptsByQuestion).length === 0) { %>
+            <tr>
+              <td colspan="2">No attempts yet.</td>
+            </tr>
+          <% } else { %>
+            <% Object.entries(participant.progress.attemptsByQuestion).forEach(([questionId, attempts]) => { %>
+              <tr>
+                <td><%= questionId %></td>
+                <td class="numeric"><%= attempts %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <p>No progress data available.</p>
+  <% } %>
+</section>

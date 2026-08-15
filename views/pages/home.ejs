@@ -1,0 +1,17 @@
+<p><%= intro %></p>
+
+<p>
+  Current player: <strong><%= currentUser.displayName %></strong>
+</p>
+
+<p>Click the button below to start or continue the mission.</p>
+
+<form method="POST" action="/game/start" class="game-start-form">
+  <button class="btn" type="submit">
+    <%= hasStarted ? "Continue mission" : "Start mission" %>
+  </button>
+</form>
+
+<div class="placeholder-box">
+  <p>Hidden content and maps will be added as gameplay is distributed.</p>
+</div>

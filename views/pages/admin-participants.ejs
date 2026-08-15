@@ -1,0 +1,49 @@
+<%- include("../partials/admin-nav") %>
+
+<section class="panel">
+  <h2>Participants</h2>
+  <p class="section-subtitle">Identity and progress snapshot for all players.</p>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Started</th>
+          <th class="numeric">Solved</th>
+          <th class="numeric">Wrong</th>
+          <th class="numeric">Hints</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% participants.forEach((participant) => { %>
+          <tr>
+            <td><%= participant.displayName %></td>
+            <td><%= participant.email %></td>
+            <td><%= participant.started ? "Yes" : "No" %></td>
+            <td class="numeric"><%= participant.solvedQuestions %></td>
+            <td class="numeric"><%= participant.wrongAnswers %></td>
+            <td class="numeric"><%= participant.hintsUsed %></td>
+            <td><%= participant.completionTime %></td>
+            <td>
+              <span class="pill <%= participant.completionStatus === "completed" ? "pill-on" : participant.started ? "pill-pending" : "pill-off" %>">
+                <%= participant.completionStatus === "completed"
+                  ? "Completed"
+                  : participant.started
+                    ? "In progress"
+                    : "Not started" %>
+              </span>
+            </td>
+            <td>
+              <a class="btn btn-small" href="/admin/participants/<%= participant.userId %>">View</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</section>
