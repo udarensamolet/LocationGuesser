@@ -2,14 +2,35 @@ import { NextFunction, Request, Response, RequestHandler } from "express";
 import { AppUser, ANONYMOUS_USER } from "../models/user.js";
 import { AppConfig } from "../services/config.js";
 
-const isAdminEmail = (email: string, adminEmails: string[]): boolean =>
-  adminEmails.includes(email.trim().toLowerCase());
-
 type IdentityFromHeaders = {
   id: string;
   email: string;
   displayName: string;
 };
+
+type ClaimLike = { typ?: string; val?: string };
+
+type MsClientPrincipalPayload = {
+  userId?: string;
+  user_details?: string;
+  userDetails?: string;
+  claims?: ClaimLike[];
+};
+
+type JwtPayload = {
+  email?: string | string[];
+  upn?: string;
+  preferred_username?: string;
+  name?: string;
+  oid?: string;
+  sub?: string;
+  emails?: string | string[];
+  unique_name?: string;
+  [key: string]: unknown;
+};
+
+const isAdminEmail = (email: string, adminEmails: string[]): boolean =>
+  adminEmails.includes(email.trim().toLowerCase());
 
 const toText = (value: string | null | undefined): string =>
   typeof value === "string" ? value.trim() : "";
@@ -24,39 +45,116 @@ const firstHeader = (req: Request, names: string[]): string => {
   return "";
 };
 
+const decodeBase64Url = (value: string): string => {
+  const normalized = value
+    .replace(/-/g, "+")
+    .replace(/_/g, "/")
+    .padEnd(value.length + ((4 - (value.length % 4)) % 4), "=");
+  return Buffer.from(normalized, "base64").toString("utf8");
+};
+
+const firstNonEmpty = (...values: Array<string | undefined | null>): string => {
+  for (const value of values) {
+    const normalized = toText(value);
+    if (normalized) {
+      return normalized;
+    }
+  }
+  return "";
+};
+
+const asPayload = (value: unknown): JwtPayload | null => {
+  if (!value || typeof value !== "object") return null;
+  return value as JwtPayload;
+};
+
+const claimToText = (raw: unknown): string => {
+  if (typeof raw === "string") {
+    return raw.trim();
+  }
+
+  if (Array.isArray(raw) && raw.length > 0 && typeof raw[0] === "string") {
+    return raw[0].trim();
+  }
+
+  return "";
+};
+
+const identityFromJwt = (token: string): IdentityFromHeaders | null => {
+  const parts = token.split(".");
+  if (parts.length < 2) return null;
+
+  try {
+    const payload = asPayload(JSON.parse(decodeBase64Url(parts[1])));
+    if (!payload) return null;
+
+    const email = firstNonEmpty(
+      claimToText(payload.email),
+      claimToText(payload.upn),
+      claimToText(payload.preferred_username),
+      claimToText(payload.emails),
+      claimToText(payload.unique_name),
+    );
+
+    const displayName = firstNonEmpty(
+      claimToText(payload.name),
+      claimToText(payload.unique_name),
+      email,
+    );
+
+    const id = firstNonEmpty(
+      claimToText(payload.oid),
+      claimToText(payload.sub),
+      email,
+    );
+
+    if (!email && !id) return null;
+
+    return {
+      id: id || email,
+      email,
+      displayName: displayName || "User",
+    };
+  } catch (_error) {
+    return null;
+  }
+};
+
 const parseMsClientPrincipal = (req: Request): IdentityFromHeaders | null => {
   const encoded = toText(req.header("x-ms-client-principal"));
   if (!encoded) return null;
 
   try {
     const decoded = Buffer.from(encoded, "base64").toString("utf8");
-    const payload = JSON.parse(decoded) as {
-      userId?: string;
-      user_details?: string;
-      userDetails?: string;
-      claims?: Array<{ typ?: string; val?: string }>;
-    };
+    const payload = JSON.parse(decoded) as MsClientPrincipalPayload;
 
     const claims = Array.isArray(payload.claims) ? payload.claims : [];
     const claimValue = (type: string) =>
       toText(claims.find((entry) => toText(entry.typ) === type)?.val);
 
-    const email =
-      claimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress") ||
-      claimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name") ||
-      claimValue("preferred_username") ||
-      toText(payload.user_details) ||
-      toText(payload.userDetails);
+    const email = firstNonEmpty(
+      claimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"),
+      claimValue("email"),
+      claimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn"),
+      claimValue("preferred_username"),
+      claimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"),
+      toText(payload.user_details),
+      toText(payload.userDetails),
+    );
 
-    const displayName =
-      claimValue("name") ||
-      claimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname") ||
-      email;
+    const displayName = firstNonEmpty(
+      claimValue("name"),
+      claimValue("http://schemas.microsoft.com/identity/claims/displayname"),
+      claimValue("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"),
+      email,
+    );
 
-    const id =
-      toText(payload.userId) ||
-      claimValue("http://schemas.microsoft.com/identity/claims/objectidentifier") ||
-      claimValue("sub");
+    const id = firstNonEmpty(
+      toText(payload.userId),
+      claimValue("http://schemas.microsoft.com/identity/claims/objectidentifier"),
+      claimValue("sub"),
+      email,
+    );
 
     if (!email && !id) return null;
 
@@ -101,23 +199,47 @@ const resolveHeaderPrincipal = (req: Request, adminEmailList: string[]): AppUser
     };
   }
 
+  const tokenFromHeader = firstHeader(req, [
+    "x-ms-token-aad-id-token",
+    "x-ms-client-principal-token",
+    "authorization",
+  ]);
+  const token = tokenFromHeader.startsWith("Bearer ")
+    ? tokenFromHeader.slice(7)
+    : tokenFromHeader;
+  const tokenIdentity = token ? identityFromJwt(token) : null;
+  if (tokenIdentity) {
+    return {
+      ...tokenIdentity,
+      isAdmin: isAdminEmail(tokenIdentity.email, adminEmailList),
+    };
+  }
+
   const trustProxyHeaders = (process.env.TRUST_PROXY_IDENTITY_HEADERS ?? "").toLowerCase() === "true";
   if (!trustProxyHeaders) return null;
 
   const proxyEmail = firstHeader(req, [
     "x-vercel-user-email",
+    "x-vercel-auth-user-email",
     "x-azure-user-email",
     "x-forwarded-email",
+    "x-forwarded-user-email",
+    "x-auth-user-email",
   ]);
   const proxyId = firstHeader(req, [
     "x-vercel-user-id",
+    "x-vercel-auth-user-id",
     "x-azure-user-id",
     "x-forwarded-user-id",
+    "x-forwarded-user",
+    "x-auth-user-id",
   ]);
   const proxyName = firstHeader(req, [
     "x-vercel-user-name",
+    "x-vercel-auth-user-name",
     "x-azure-user-name",
     "x-forwarded-user-name",
+    "x-auth-user-name",
   ]);
 
   if (!proxyEmail && !proxyId && !proxyName) {
@@ -126,6 +248,7 @@ const resolveHeaderPrincipal = (req: Request, adminEmailList: string[]): AppUser
 
   const email = proxyEmail || proxyId;
   const id = proxyId || proxyEmail;
+
   return {
     id,
     email: email || "",
@@ -149,11 +272,15 @@ const resolveAuthenticatedUser = (config: AppConfig): ((req: Request) => AppUser
 
   return (req: Request): AppUser => {
     const principal = resolveHeaderPrincipal(req, config.adminEmails);
-    if (!principal || !principal.email) {
+    if (!principal || (!principal.id && !principal.email)) {
       return ANONYMOUS_USER;
     }
 
-    return principal;
+    return {
+      ...principal,
+      id: principal.id || principal.email,
+      email: principal.email || principal.id,
+    };
   };
 };
 

@@ -152,12 +152,15 @@ Vercel does not inject Azure App Service identity headers by default.
 
 1. Keep Easy Auth off in Vercel frontend and add an identity layer in front of this server (for example OAuth/OIDC proxy).
 2. Configure that layer to send these headers on each request:
-   - `x-vercel-user-email`
-   - `x-vercel-user-id`
-   - `x-vercel-user-name`
+   - `x-vercel-user-email` (or `x-vercel-auth-user-email`)
+   - `x-vercel-user-id` (or `x-vercel-auth-user-id`)
+   - `x-vercel-user-name` (or `x-vercel-auth-user-name`)
+   - Common reverse-proxy alternatives: `x-forwarded-email`, `x-forwarded-user-id`, `x-forwarded-user-name`, `x-auth-user-*`
 3. In Vercel env vars, set:
    - `TRUST_PROXY_IDENTITY_HEADERS=true`
 4. Set `DEV_AUTH_BYPASS=false`.
+
+If you log in at the browser level (for example with your Microsoft account) but no identity headers are injected into requests to this app, `/api/me` and the UI will still show `Guest`.
 
 This app trusts these headers only when `TRUST_PROXY_IDENTITY_HEADERS=true`.
 
