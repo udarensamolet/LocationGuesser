@@ -1,6 +1,6 @@
 import { createApp } from "../src/app.js";
 
-let appPromise: Promise<ReturnType<typeof createApp>> | null = null;
+let appPromise: ReturnType<typeof createApp> | null = null;
 
 const getApp = () => {
   if (!appPromise) {
