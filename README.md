@@ -127,6 +127,40 @@ This app can be deployed to Azure App Service (Linux + Node.js 20). Replace plac
 
 Push this repository to GitHub and configure an Azure App Service deployment workflow. Use `npm install`, `npm run build`, and `npm run start` in the build step.
 
+## Authentication setup
+
+### Step 1 (Azure): use Microsoft Entra Easy Auth on App Service
+
+Use this when running behind Azure App Service:
+
+1. In Azure Portal, open your App Service.
+2. Go to **Authentication** and enable Microsoft Entra ID as provider.
+3. Turn on **App Service Authentication** and require authentication for incoming requests.
+4. Set your app settings:
+   - `NODE_ENV=production`
+   - `DEV_AUTH_BYPASS=false`
+   - `ADMIN_EMAILS=you@company.com`
+5. Make sure your app is using the middleware headers from Easy Auth (already supported):
+   - `x-ms-client-principal-email`
+   - `x-ms-client-principal-id`
+   - `x-ms-client-principal-object-id`
+   - `x-ms-client-principal` (JSON claims fallback)
+
+### Step 2 (Vercel): use trusted identity headers from your own auth layer
+
+Vercel does not inject Azure App Service identity headers by default.
+
+1. Keep Easy Auth off in Vercel frontend and add an identity layer in front of this server (for example OAuth/OIDC proxy).
+2. Configure that layer to send these headers on each request:
+   - `x-vercel-user-email`
+   - `x-vercel-user-id`
+   - `x-vercel-user-name`
+3. In Vercel env vars, set:
+   - `TRUST_PROXY_IDENTITY_HEADERS=true`
+4. Set `DEV_AUTH_BYPASS=false`.
+
+This app trusts these headers only when `TRUST_PROXY_IDENTITY_HEADERS=true`.
+
 ## Project structure
 
 ```bash
