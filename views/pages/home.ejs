@@ -1,11 +1,14 @@
 <p><%= intro %></p>
 
 <% const normalizedRules = typeof rules === "string" ? rules.replace(/\\r\\n/g, "\n").replace(/\\n/g, "\n").trim() : ""; %>
-<% const ruleLines = normalizedRules ? normalizedRules.split("\n").map((line) => line.trim()).filter(Boolean) : []; %>
+<% const rawRuleLines = normalizedRules ? normalizedRules.split("\n").map((line) => line.trim()).filter(Boolean) : []; %>
+<% const hasRulesTitle = rawRuleLines.length > 0 && /^how to play:/i.test(rawRuleLines[0]); %>
+<% const rulesTitle = hasRulesTitle ? rawRuleLines.shift() : "Rules"; %>
+<% const ruleLines = rawRuleLines; %>
 
 <% if (ruleLines.length > 0) { %>
-  <section class="panel-mini">
-    <h2>Rules</h2>
+  <section class="panel-mini rules-panel">
+    <h2><%= rulesTitle %></h2>
     <ul class="rules-list">
       <% for (const line of ruleLines) { %>
         <li class="rules-list-item"><%= line %></li>

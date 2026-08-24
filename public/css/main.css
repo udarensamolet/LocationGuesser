@@ -247,14 +247,36 @@ nav a:hover {
 
 .rules-list {
   margin: 0;
-  padding-left: 1.2rem;
+  padding: 0;
+  list-style: none;
 }
 
 .rules-list-item {
-  margin: 0.15rem 0;
+  margin: 0.4rem 0;
+  padding-left: 1.3rem;
+  position: relative;
   line-height: 1.45;
   color: var(--text-main);
   font-family: inherit;
+  font-size: 0.97rem;
+}
+
+.rules-list-item::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.rules-panel h2 {
+  margin-bottom: 0.6rem;
+  color: #0d3f66;
+}
+
+.rules-panel {
+  border-left: 4px solid var(--accent);
 }
 
 .panel h1 {
