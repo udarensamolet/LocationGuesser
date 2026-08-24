@@ -5,13 +5,16 @@ export const createCoreRoutes = (gameService: GameService) => {
   const router = Router();
 
   router.get("/", async (req, res) => {
-    const progress = await gameService.getProgressPayload(req.currentUser);
+    const [progress, gameConfig] = await Promise.all([
+      gameService.getProgressPayload(req.currentUser),
+      gameService.getGameConfig(),
+    ]);
 
     res.render("layouts/base", {
       title: "Welcome",
       pageTitle: "Location Guessing Game",
-      intro:
-        "Answer each challenge and uncover the secret location as soon as possible.",
+      intro: gameConfig.introduction,
+      rules: gameConfig.rules,
       content: "pages/home",
       currentUser: req.currentUser,
       hasStarted: progress?.hasStarted ?? false,

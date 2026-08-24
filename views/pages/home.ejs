@@ -1,5 +1,12 @@
 <p><%= intro %></p>
 
+<% if (typeof rules === "string" && rules.trim()) { %>
+  <section class="panel-mini">
+    <h2>Rules</h2>
+    <pre class="rules-block"><%= rules %></pre>
+  </section>
+<% } %>
+
 <p>
   Current player: <strong><%= currentUser.displayName %></strong>
 </p>
