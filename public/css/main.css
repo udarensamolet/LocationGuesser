@@ -245,6 +245,18 @@ nav a:hover {
   white-space: pre-wrap;
 }
 
+.rules-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.rules-list-item {
+  margin: 0.15rem 0;
+  line-height: 1.45;
+  color: var(--text-main);
+  font-family: inherit;
+}
+
 .panel h1 {
   margin-top: 0;
   color: var(--accent);
