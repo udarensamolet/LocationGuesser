@@ -15,6 +15,36 @@
 
 const asArray = (value) => Array.isArray(value) ? value : [];
 const safeText = (value) => (typeof value === "string" ? value.trim() : "");
+const formatDuration = (milliseconds) => {
+  if (milliseconds === null || milliseconds === undefined) {
+    return "-";
+  }
+  const totalSeconds = Math.max(0, Math.floor(Number(milliseconds) / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+};
+
+const getCompletionTimeMs = () => {
+  if (!state.completedAt || !state.startedAt) {
+    return null;
+  }
+
+  const start = Date.parse(state.startedAt);
+  const finish = Date.parse(state.completedAt);
+  if (Number.isNaN(start) || Number.isNaN(finish)) {
+    return null;
+  }
+
+  return Math.max(0, finish - start);
+};
+
+const renderSuccessTime = () => {
+  const successTime = document.querySelector("#success-time");
+  if (!successTime) return;
+
+  successTime.textContent = formatDuration(getCompletionTimeMs());
+};
 
 const state = {
   hasStarted: false,
@@ -174,9 +204,14 @@ const renderQuestion = () => {
   finalSuccess.classList.add("hidden");
 
   if (state.completedAt || state.solvedQuestionsCount === state.totalQuestions) {
-    finalForm.classList.remove("hidden");
     if (state.completedAt) {
+      finalForm.classList.add("hidden");
       finalSuccess.classList.remove("hidden");
+      renderSuccessTime();
+      renderClueBoard();
+    } else {
+      finalForm.classList.remove("hidden");
+      finalSuccess.classList.add("hidden");
     }
     return;
   }
@@ -374,13 +409,11 @@ const initFinalGuess = () => {
       await loadProgress();
       renderQuestion();
       if (response.correct) {
-        const success = document.querySelector("#success-time");
-        if (success) success.textContent = response.finalTimeMs
-          ? `${Math.floor(response.finalTimeMs / 1000)} seconds`
-          : "-";
-        setFeedback("Congratulations! The mission is revealed.", "success");
+        setFeedback("🎉 Congratulations! The mission is revealed. 🏆", "success");
+        renderSuccessTime();
+        document.querySelector("#final-form-wrap")?.classList.add("hidden");
       } else {
-        setFeedback("That is not the correct location answer.", "error");
+        setFeedback(`❌ ${response.message}`, "error");
       }
     } catch (error) {
       setFeedback(error.message, "error");

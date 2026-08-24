@@ -2,22 +2,19 @@
   "title": "Operation: TeamBuilding Location",
   "status": "closed",
   "introduction": "Guess the location for our next Inensia teambuilding :)",
-  "rules": "No rules :)",
+  "rules": "How to play:\n1) Solve each round of questions to advance.\n2) A correct answer reveals one or more letters that are part of the secret location.\n3) Pay attention to all hints, because unlocked letters are not shown in the correct order. They are intentionally scrambled and should be rearranged mentally.\n4) You will notice some letters are missing. Not every character of the answer is revealed during the game.\n5) Use your reasoning and all available clues to guess the full location before time runs out.\n6) The game tracks your results and completion times.\n7) The player with the fastest correct full guess wins a prize, which will be awarded at the teambuilding.",
   "startDateTime": "2026-08-12T05:00:00.000Z",
   "endDateTime": "2026-08-12T17:00:00.000Z",
   "leaderboardVisible": true,
   "createdAt": "2026-08-12T00:00:00.000Z",
   "updatedAt": "2026-08-12T08:25:20.049Z",
-  "secretLocation": "Veliko Tarnovo",
+  "secretLocation": "Panagyurishte",
   "acceptedLocationAnswers": [
-    "Turnovo",
-    "Tarnovo",
-    "Tyrnovo",
-    "V Turnovo",
-    "V Tarnovo",
-    "V Tyrnovo",
-    "Veliko Tarnovo",
-    "Veliko Turnovo",
-    "Veliko Tyrnovo"
+    "Панагюрище",
+    "панагюрище",
+    "Panagyurishte",
+    "panagyurishte",
+    "Panagurishte",
+    "panagurishte"
   ]
 }

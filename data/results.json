@@ -1,3 +1,28 @@
 {
-  "results": []
+  "results": [
+    {
+      "id": "67342d37-be07-4307-8be9-fa5cca1016eb",
+      "userId": "dev-user",
+      "displayName": "Разработчик",
+      "email": "employee@company.local",
+      "finalGuess": "panagyurishte",
+      "completedAt": "2026-08-24T11:52:16.786Z",
+      "startedAt": "2026-08-24T11:47:26.587Z",
+      "finalAnswerAttempts": 2,
+      "totalSolved": 4,
+      "totalClues": 4
+    },
+    {
+      "id": "00ff908f-25b5-47ae-9b59-8eef2e4f48af",
+      "userId": "dev-user-2",
+      "displayName": "rositsa.nenova@inensia.com",
+      "email": "rositsa.nenova@inensia.com",
+      "finalGuess": "panagyurishte",
+      "completedAt": "2026-08-24T12:08:50.538Z",
+      "startedAt": "2026-08-24T12:08:17.289Z",
+      "finalAnswerAttempts": 1,
+      "totalSolved": 4,
+      "totalClues": 4
+    }
+  ]
 }

@@ -274,6 +274,7 @@ nav a:hover {
   border: 1px solid;
   padding: 1rem;
   margin: 1rem 0;
+  background: #ffffff;
 }
 
 .alert h2 {
@@ -282,7 +283,9 @@ nav a:hover {
 
 .alert-error {
   border-color: var(--danger);
-  background: rgba(185, 28, 28, 0.08);
+  background-color: #fca5a5 !important;
+  border-color: #b91c1c !important;
+  color: #7f1d1d !important;
 }
 
 .alert-warning {
@@ -292,7 +295,9 @@ nav a:hover {
 
 .alert-success {
   border-color: var(--success);
-  background: rgba(31, 123, 189, 0.12);
+  background-color: #86efac !important;
+  border-color: #15803d !important;
+  color: #065f46 !important;
 }
 
 .game-section {

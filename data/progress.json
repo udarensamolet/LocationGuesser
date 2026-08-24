@@ -1,39 +1,73 @@
 {
   "users": {
-    "rositsa.nenova@inensia.com": {
-      "userId": "rositsa.nenova@inensia.com",
-      "displayName": "Rositsa",
-      "email": "rositsa.nenova@inensia.com",
-      "startedAt": "2026-08-12T08:23:11.737Z",
-      "currentQuestionId": "q3",
+    "dev-user": {
+      "userId": "dev-user",
+      "displayName": "Разработчик",
+      "email": "employee@company.local",
+      "startedAt": "2026-08-24T11:47:26.587Z",
+      "currentQuestionId": null,
       "solvedQuestions": [
         "q1",
-        "q2"
+        "q2",
+        "q4",
+        "q5"
       ],
       "attemptsByQuestion": {
-        "q1": 2,
+        "q1": 1,
         "q2": 1,
-        "q3": 2
+        "q4": 1,
+        "q5": 1
       },
-      "wrongAnswersByQuestion": {
-        "q1": [
-          "отговор a"
-        ],
-        "q3": [
-          "[\"Добре дошли\"]",
-          "[\"Който за който\"]"
-        ]
-      },
+      "wrongAnswersByQuestion": {},
       "hintsUsed": {
-        "q3": true
+        "q4": true
       },
       "unlockedClues": [
-        "Т",
-        "АИНА"
+        "e",
+        "r",
+        "i",
+        "n"
       ],
-      "completedAt": null,
-      "finalAnswerAttempts": 0,
-      "finalCorrectAt": null
+      "completedAt": "2026-08-24T11:52:16.786Z",
+      "finalAnswerAttempts": 2,
+      "finalCorrectAt": "2026-08-24T11:52:16.786Z"
+    },
+    "dev-user-2": {
+      "userId": "dev-user-2",
+      "displayName": "rositsa.nenova@inensia.com",
+      "email": "rositsa.nenova@inensia.com",
+      "startedAt": "2026-08-24T12:08:17.289Z",
+      "currentQuestionId": null,
+      "solvedQuestions": [
+        "q1",
+        "q2",
+        "q4",
+        "q5"
+      ],
+      "attemptsByQuestion": {
+        "q1": 1,
+        "q2": 2,
+        "q4": 1,
+        "q5": 2
+      },
+      "wrongAnswersByQuestion": {
+        "q2": [
+          "berlinaa"
+        ],
+        "q5": [
+          "beli bryag"
+        ]
+      },
+      "hintsUsed": {},
+      "unlockedClues": [
+        "e",
+        "r",
+        "i",
+        "n"
+      ],
+      "completedAt": "2026-08-24T12:08:50.538Z",
+      "finalAnswerAttempts": 1,
+      "finalCorrectAt": "2026-08-24T12:08:50.538Z"
     }
   }
 }

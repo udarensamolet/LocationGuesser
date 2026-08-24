@@ -163,6 +163,277 @@
         "status": "closed",
         "leaderboardVisible": true
       }
+    },
+    {
+      "at": "2026-08-24T11:47:26.594Z",
+      "adminId": "dev-user",
+      "adminEmail": "employee@company.local",
+      "action": "game_started",
+      "details": {
+        "questionCount": 4
+      }
+    },
+    {
+      "at": "2026-08-24T11:47:34.439Z",
+      "adminId": "dev-user",
+      "adminEmail": "employee@company.local",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T11:47:40.738Z",
+      "adminId": "dev-user",
+      "adminEmail": "employee@company.local",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q2",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T11:47:46.698Z",
+      "adminId": "dev-user",
+      "adminEmail": "employee@company.local",
+      "action": "question_hint",
+      "details": {
+        "questionId": "q4"
+      }
+    },
+    {
+      "at": "2026-08-24T11:47:51.019Z",
+      "adminId": "dev-user",
+      "adminEmail": "employee@company.local",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q4",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T11:47:56.180Z",
+      "adminId": "dev-user",
+      "adminEmail": "employee@company.local",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q5",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T11:52:16.800Z",
+      "adminId": "dev-user",
+      "adminEmail": "employee@company.local",
+      "action": "final_answer",
+      "details": {
+        "accepted": true,
+        "attempts": 2
+      }
+    },
+    {
+      "at": "2026-08-24T11:59:31.087Z",
+      "adminId": "dev-user",
+      "adminEmail": "admin@company.local",
+      "action": "participant_reset",
+      "details": {
+        "userId": "rositsa.nenova@inensia.com",
+        "mode": "progress_only"
+      }
+    },
+    {
+      "at": "2026-08-24T12:02:27.952Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova2@inensia.com",
+      "action": "game_started",
+      "details": {
+        "questionCount": 4
+      }
+    },
+    {
+      "at": "2026-08-24T12:03:27.695Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova2@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:05:25.628Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova2@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:05:40.357Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova2@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": true
+      }
+    },
+    {
+      "at": "2026-08-24T12:05:43.500Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova2@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": true
+      }
+    },
+    {
+      "at": "2026-08-24T12:06:33.201Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova2@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": true
+      }
+    },
+    {
+      "at": "2026-08-24T12:07:54.210Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "participant_reset",
+      "details": {
+        "userId": "dev-user-2",
+        "mode": "progress_only"
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:17.291Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "game_started",
+      "details": {
+        "questionCount": 4
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:20.658Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q1",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:27.929Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q2",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:33.380Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q2",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:36.345Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q4",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:39.837Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q5",
+        "questionType": "question",
+        "correct": false,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:41.892Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "question_answer",
+      "details": {
+        "questionId": "q5",
+        "questionType": "question",
+        "correct": true,
+        "duplicate": false,
+        "maxAttemptsReached": false
+      }
+    },
+    {
+      "at": "2026-08-24T12:08:50.546Z",
+      "adminId": "dev-user-2",
+      "adminEmail": "rositsa.nenova@inensia.com",
+      "action": "final_answer",
+      "details": {
+        "accepted": true,
+        "attempts": 1
+      }
     }
   ]
 }
