@@ -4,16 +4,16 @@
 <% const rawRuleLines = normalizedRules ? normalizedRules.split("\n").map((line) => line.trim()).filter(Boolean) : []; %>
 <% const hasRulesTitle = rawRuleLines.length > 0 && /^how to play:/i.test(rawRuleLines[0]); %>
 <% const rulesTitle = hasRulesTitle ? rawRuleLines.shift() : "Rules"; %>
-<% const ruleLines = rawRuleLines; %>
+<% const ruleLines = rawRuleLines.map((line) => line.replace(/^\d+[)\.]\s*/, "")); %>
 
 <% if (ruleLines.length > 0) { %>
   <section class="panel-mini rules-panel">
     <h2><%= rulesTitle %></h2>
-    <ul class="rules-list">
+    <ol class="rules-list">
       <% for (const line of ruleLines) { %>
         <li class="rules-list-item"><%= line %></li>
       <% } %>
-    </ul>
+    </ol>
   </section>
 <% } %>
 

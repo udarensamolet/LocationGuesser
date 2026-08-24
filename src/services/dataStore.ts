@@ -1,5 +1,6 @@
 ﻿import { randomUUID } from "node:crypto";
 import path from "node:path";
+import { promises as fs } from "node:fs";
 import {
   AuditLogFile,
   GameDocument,
@@ -18,6 +19,98 @@ import {
 import { JsonFileRepository } from "../repositories/jsonFileRepository.js";
 
 const nowIso = () => new Date().toISOString();
+
+const maybeAccess = async (filePath: string): Promise<boolean> => {
+  try {
+    await fs.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const parseGameDocument = (payload: string): GameDocument | null => {
+  try {
+    const value = JSON.parse(payload);
+    if (!value || typeof value !== "object") {
+      return null;
+    }
+    return value as GameDocument;
+  } catch {
+    return null;
+  }
+};
+
+const isDefaultGameDocument = (value: GameDocument | null): boolean => {
+  if (!value) return false;
+  return (
+    value.title === gameDefault.title &&
+    value.introduction === gameDefault.introduction &&
+    value.rules === gameDefault.rules
+  );
+};
+
+const seedMissingFile = async (sourcePath: string, targetPath: string): Promise<void> => {
+  const shouldSeed = !(await maybeAccess(targetPath));
+  if (!shouldSeed) return;
+  if (!(await maybeAccess(sourcePath))) return;
+
+  await fs.mkdir(path.dirname(targetPath), { recursive: true });
+  await fs.copyFile(sourcePath, targetPath);
+};
+
+const seedGameFileFromSource = async (sourcePath: string, targetPath: string): Promise<void> => {
+  const targetExists = await maybeAccess(targetPath);
+  const sourceExists = await maybeAccess(sourcePath);
+
+  if (!sourceExists || sourcePath === targetPath) {
+    return;
+  }
+
+  if (!targetExists) {
+    await fs.mkdir(path.dirname(targetPath), { recursive: true });
+    await fs.copyFile(sourcePath, targetPath);
+    return;
+  }
+
+  const [sourceText, targetText] = await Promise.all([
+    fs.readFile(sourcePath, "utf8"),
+    fs.readFile(targetPath, "utf8"),
+  ]);
+
+  const sourceDocument = parseGameDocument(sourceText);
+  const targetDocument = parseGameDocument(targetText);
+  if (!sourceDocument || !targetDocument) {
+    return;
+  }
+
+  const targetUsesDefault = isDefaultGameDocument(targetDocument);
+  const differsFromSource = sourceDocument.rules !== targetDocument.rules;
+  if (targetUsesDefault && differsFromSource) {
+    await fs.copyFile(sourcePath, targetPath);
+  }
+};
+
+const seedDataDirectory = async (sourceDir: string, targetDir: string): Promise<void> => {
+  if (path.resolve(sourceDir) === path.resolve(targetDir)) {
+    return;
+  }
+
+  const fileNames = ["game.json", "questions.json", "users.json", "progress.json", "results.json", "audit-log.json"];
+
+  await Promise.all(
+    fileNames.map((fileName) => {
+      const sourcePath = path.join(sourceDir, fileName);
+      const targetPath = path.join(targetDir, fileName);
+
+      if (fileName === "game.json") {
+        return seedGameFileFromSource(sourcePath, targetPath);
+      }
+
+      return seedMissingFile(sourcePath, targetPath);
+    }),
+  );
+};
 
 const normalizeStatus = (value: unknown): GameStatus => {
   if (value === "draft" || value === "active" || value === "closed" || value === "revealed") {
@@ -354,6 +447,7 @@ export const createDataStore = (dataDir: string): DataStore => {
 };
 
 export const initializeDataStore = async (dataDir: string): Promise<DataStore> => {
+  await seedDataDirectory(path.resolve(process.cwd(), "data"), path.resolve(process.cwd(), dataDir));
   const store = createDataStore(dataDir);
   await Promise.all([
     store.game.read(),

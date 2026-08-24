@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg-main: #ffffff;
   --surface: #ffffff;
   --surface-strong: #ffffff;
@@ -247,36 +247,34 @@ nav a:hover {
 
 .rules-list {
   margin: 0;
-  padding: 0;
-  list-style: none;
+  padding-left: 1.4rem;
+  list-style: decimal;
+  display: grid;
+  gap: 0.35rem 0;
+  font-size: 0.97rem;
+  color: var(--text-main);
+  line-height: 1.45;
+  font-family: inherit;
 }
 
 .rules-list-item {
-  margin: 0.4rem 0;
-  padding-left: 1.3rem;
-  position: relative;
-  line-height: 1.45;
-  color: var(--text-main);
-  font-family: inherit;
-  font-size: 0.97rem;
+  margin: 0;
+  padding-left: 0.15rem;
 }
 
-.rules-list-item::before {
-  content: "▸";
-  position: absolute;
-  left: 0;
-  top: 0;
+.rules-list-item::marker {
   color: var(--accent);
-  font-size: 0.9rem;
-}
-
-.rules-panel h2 {
-  margin-bottom: 0.6rem;
-  color: #0d3f66;
+  font-weight: 700;
 }
 
 .rules-panel {
   border-left: 4px solid var(--accent);
+  background: linear-gradient(90deg, rgba(31, 123, 189, 0.08), #ffffff 32%);
+}
+
+.rules-panel h2 {
+  margin-bottom: 0.45rem;
+  color: #0d3f66;
 }
 
 .panel h1 {
