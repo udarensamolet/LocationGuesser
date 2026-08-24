@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20.10 <21"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "tsx watch src/server.ts",

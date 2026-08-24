@@ -27,18 +27,22 @@ export const getAppConfig = (): AppConfig => {
   const devAuthBypass = (process.env.DEV_AUTH_BYPASS ?? "").toLowerCase() === "true";
   const requestedPort = parseInt(process.env.PORT ?? "3000", 10);
   const port = Number.isFinite(requestedPort) && requestedPort > 0 ? requestedPort : 3000;
+  const isVercel = process.env.VERCEL === "1" || process.env.VERCEL === "true";
+  const resolvedDataDir = process.env.DATA_DIR ?? (isVercel ? "/tmp/data" : "./data");
+  const safeDevAuthBypass =
+    nodeEnv === "production" && devAuthBypass
+      ? false
+      : devAuthBypass;
 
-  if (nodeEnv === "production" && devAuthBypass) {
-    throw new Error(
-      "DEV_AUTH_BYPASS cannot be enabled when NODE_ENV=production.",
-    );
+  if (safeDevAuthBypass !== devAuthBypass) {
+    console.warn("DEV_AUTH_BYPASS is ignored in production.");
   }
 
   return {
     port,
     nodeEnv,
-    dataDir: path.resolve(process.cwd(), process.env.DATA_DIR ?? "./data"),
-    devAuthBypass,
+    dataDir: path.resolve(process.cwd(), resolvedDataDir),
+    devAuthBypass: safeDevAuthBypass,
     devUserId: process.env.DEV_USER_ID ?? "dev-user",
     devUserEmail: process.env.DEV_USER_EMAIL ?? "employee@company.local",
     devUserName: process.env.DEV_USER_NAME ?? "Development User",
