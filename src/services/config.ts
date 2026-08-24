@@ -28,7 +28,12 @@ export const getAppConfig = (): AppConfig => {
   const requestedPort = parseInt(process.env.PORT ?? "3000", 10);
   const port = Number.isFinite(requestedPort) && requestedPort > 0 ? requestedPort : 3000;
   const isVercel = process.env.VERCEL === "1" || process.env.VERCEL === "true";
-  const resolvedDataDir = process.env.DATA_DIR ?? (isVercel ? "/tmp/data" : "./data");
+  const configuredDataDir = (process.env.DATA_DIR ?? "").trim();
+  const isReadOnlyDataDir = configuredDataDir === "" || configuredDataDir.startsWith("/var/task");
+  const resolvedDataDir =
+    isVercel && (isReadOnlyDataDir || !path.isAbsolute(configuredDataDir))
+      ? "/tmp/data"
+      : configuredDataDir || (isVercel ? "/tmp/data" : "./data");
   const safeDevAuthBypass =
     nodeEnv === "production" && devAuthBypass
       ? false
