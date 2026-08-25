@@ -4,9 +4,11 @@
       <img src="/images/logo.png" alt="Company logo" />
       <span>Location Guessing Game</span>
     </a>
-    <p class="user-label">User: <strong>
-        <%= currentUser.displayName %>
-      </strong></p>
+    <% if (currentUser.id !== "anonymous") { %>
+      <p class="user-label">User: <strong>
+          <%= currentUser.displayName %>
+        </strong></p>
+    <% } %>
     <nav>
       <a href="/">Home</a>
       <a href="/game">Mission</a>

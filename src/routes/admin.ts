@@ -18,7 +18,7 @@ const ensureHttpError = (error: unknown, fallback: string, status = 400): HttpEr
 
 const createAdminRoutes = (adminService: AdminService): Router => {
   const router = Router();
-  router.use(requireAdmin);
+  router.use("/admin", requireAdmin);
 
   router.get("/admin", async (req, res, next) => {
     try {
