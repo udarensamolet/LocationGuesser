@@ -321,7 +321,7 @@ const renderQuestion = () => {
           setFeedback("Correct answer.", "success");
         }
       } else {
-        setFeedback(response.message, "warning");
+        setFeedback(response.message, "error");
       }
     } catch (error) {
       setFeedback(error.message, "error");
