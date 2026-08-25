@@ -1,9 +1,9 @@
 <header class="site-header">
   <div class="site-shell">
-    <a href="/" class="brand">
+    <div class="brand" aria-label="Secret Inensia Location">
       <img src="/images/logo.png" alt="Company logo" />
-      <span>Location Guessing Game</span>
-    </a>
+      <span>Secret Inensia Location</span>
+    </div>
     <% if (currentUser.id !== "anonymous") { %>
       <p class="user-label">User: <strong>
           <%= currentUser.displayName %>
