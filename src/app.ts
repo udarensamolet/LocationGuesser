@@ -12,12 +12,27 @@ import { GameService } from "./services/gameService.js";
 import { createGameRoutes } from "./routes/game.js";
 import { AdminService } from "./services/adminService.js";
 import { createAdminRoutes, createPublicRoutes } from "./routes/admin.js";
+import {
+  hydrateDataDirectoryFromBlob,
+  isBlobStorageEnabled,
+  syncDataDirectoryToBlob,
+} from "./services/blobDataSync.js";
 
 export const createApp = async (config: AppConfig = getAppConfig()) => {
   const app = express();
+  const blobStorageEnabled = isBlobStorageEnabled();
+
+  if (blobStorageEnabled) {
+    await hydrateDataDirectoryFromBlob(config.dataDir);
+  }
+
   const store = await initializeDataStore(config.dataDir);
   const gameService = new GameService(store);
   const adminService = new AdminService(store);
+
+  if (blobStorageEnabled) {
+    await syncDataDirectoryToBlob(config.dataDir);
+  }
 
   app.set("view engine", "ejs");
   app.set("views", path.join(process.cwd(), "views"));
@@ -27,6 +42,22 @@ export const createApp = async (config: AppConfig = getAppConfig()) => {
   app.use(express.json({ limit: "1mb" }));
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
   app.use(express.static(path.join(process.cwd(), "public")));
+
+  if (blobStorageEnabled) {
+    app.use((req, res, next) => {
+      const writesData = ["POST", "PUT", "PATCH", "DELETE"].includes(req.method);
+
+      if (writesData) {
+        res.on("finish", () => {
+          void syncDataDirectoryToBlob(config.dataDir).catch((error) => {
+            console.error("Failed to sync data files to Vercel Blob:", error);
+          });
+        });
+      }
+
+      next();
+    });
+  }
 
   app.use(createCurrentUserMiddleware(config));
 
