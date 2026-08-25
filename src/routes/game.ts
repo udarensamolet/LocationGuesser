@@ -17,6 +17,11 @@ export const createGameRoutes = (gameService: GameService) => {
   router.post("/game/start", async (req, res, next) => {
     try {
       const currentUser = req.currentUser;
+      const progress = await gameService.getProgressPayload(currentUser);
+      if (progress?.completedAt) {
+        res.redirect(303, "/game");
+        return;
+      }
       await gameService.startGameForUser(currentUser);
       res.redirect(303, "/game");
     } catch (error) {

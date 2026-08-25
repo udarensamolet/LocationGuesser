@@ -72,6 +72,7 @@ export const createCoreRoutes = (gameService: GameService) => {
       gameService.getGameConfig(),
     ]);
 
+    const hasCompleted = Boolean(progress?.completedAt);
     res.render("layouts/base", {
       title: "Welcome",
       pageTitle: "Location Guessing Game",
@@ -79,6 +80,7 @@ export const createCoreRoutes = (gameService: GameService) => {
       rules: gameConfig.rules,
       content: "pages/home",
       currentUser: req.currentUser,
+      hasCompleted,
       hasStarted: progress?.hasStarted ?? false,
     });
   });

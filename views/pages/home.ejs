@@ -21,10 +21,12 @@
   Current player: <strong><%= currentUser.displayName %></strong>
 </p>
 
-<p>Click the button below to start or continue the mission.</p>
+<p>
+  <%= hasCompleted ? "This account has already completed the mission." : "Click the button below to start or continue the mission." %>
+</p>
 
 <form method="POST" action="/game/start" class="game-start-form">
   <button class="btn" type="submit">
-    <%= hasStarted ? "Continue mission" : "Start mission" %>
+    <%= hasCompleted ? "View mission result" : hasStarted ? "Continue mission" : "Start mission" %>
   </button>
 </form>

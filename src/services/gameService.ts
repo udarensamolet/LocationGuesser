@@ -66,6 +66,11 @@ export interface FinalAnswerResult {
 
 const nowIso = () => new Date().toISOString();
 const MAX_FINAL_ANSWER_ATTEMPTS = 10;
+const createConflictError = (message: string) => {
+  const error = new Error(message) as Error & { status?: number };
+  error.status = 409;
+  return error;
+};
 
 const normalizeText = (value: unknown): string =>
   normalizeTextInput(typeof value === "string" ? value : "");
@@ -212,6 +217,12 @@ export class GameService {
     return progress;
   }
 
+  private assertMissionNotCompleted(progress: ParticipantProgress): void {
+    if (progress.completedAt || progress.finalCorrectAt) {
+      throw createConflictError("This mission has already been completed.");
+    }
+  }
+
   private resolveCurrentQuestion(progress: ParticipantProgress, questions: Question[]): Question | null {
     if (progress.currentQuestionId) {
       const explicit = questions.find((question) => question.id === progress.currentQuestionId);
@@ -349,6 +360,7 @@ export class GameService {
 
     await this.store.progress.update((file: ProgressFile): ProgressFile => {
       const progress = this.getOrThrowProgress(file, user.id);
+      this.assertMissionNotCompleted(progress);
       const target = questions.find((entry) => entry.id === questionId);
       const current = this.resolveCurrentQuestion(progress, questions);
 
@@ -499,6 +511,7 @@ export class GameService {
     await this.store.progress.update((file: ProgressFile): ProgressFile => {
       try {
         const progress = this.getOrThrowProgress(file, user.id);
+        this.assertMissionNotCompleted(progress);
         const current = this.resolveCurrentQuestion(progress, questions);
 
         if (!current) {
@@ -544,8 +557,6 @@ export class GameService {
     const expected = game.acceptedLocationAnswers.map(normalizeText);
     const normalized = normalizeText(finalAnswer);
     const questions = await this.readQuestions();
-    const totalQuestions = questions.length;
-
     const source = await this.store.progress.read();
     const progress = source.users[user.id];
     if (!progress) {
@@ -554,6 +565,8 @@ export class GameService {
         message: "Please solve all questions first.",
       };
     }
+
+    this.assertMissionNotCompleted(progress);
 
     const unsolved = questions.filter((question) => !progress.solvedQuestions.includes(question.id));
     if (unsolved.length > 0) {
@@ -565,18 +578,11 @@ export class GameService {
     }
 
     let finalCorrect = false;
-    let alreadyCompleted = false;
     let maxAttemptsReached = false;
     let finalTimeMs: number | undefined;
 
     await this.store.progress.update((file: ProgressFile): ProgressFile => {
       const currentProgress = this.getOrThrowProgress(file, user.id);
-      if (currentProgress.finalCorrectAt) {
-        finalCorrect = true;
-        alreadyCompleted = true;
-        return file;
-      }
-
       if (currentProgress.finalAnswerAttempts >= MAX_FINAL_ANSWER_ATTEMPTS) {
         maxAttemptsReached = true;
         return file;
@@ -598,15 +604,6 @@ export class GameService {
     });
 
     if (!finalCorrect) {
-      if (alreadyCompleted) {
-        return {
-          correct: false,
-          maxAttemptsReached: false,
-          attemptsLeft: 0,
-          message: "This mission has already been completed.",
-        };
-      }
-
       if (maxAttemptsReached) {
         return {
           correct: false,
@@ -633,36 +630,27 @@ export class GameService {
       throw new Error("No active progress was found.");
     }
 
-    if (!alreadyCompleted) {
-      const results = await this.store.results.read();
-      const exists = results.results.some((entry) => entry.userId === user.id);
-      if (!exists) {
-        await this.store.results.update((resultsFile: ResultsFile): ResultsFile => ({
-          ...resultsFile,
-          results: [
-            ...resultsFile.results,
-            {
-              id: randomUUID(),
-              userId: user.id,
-              displayName: user.displayName,
-              email: user.email,
-              finalGuess: normalized,
-              completedAt: finalProgress.completedAt ?? nowIso(),
-              startedAt: finalProgress.startedAt,
-              finalAnswerAttempts: finalProgress.finalAnswerAttempts,
-              totalSolved: finalProgress.solvedQuestions.length,
-              totalClues: finalProgress.unlockedClues.length,
-            } satisfies GameResult,
-          ],
-        }));
-      }
-    } else if (finalTimeMs === undefined) {
-      const results = await this.store.results.read();
-      const existing = results.results.find((entry) => entry.userId === user.id);
-      if (existing) {
-        finalTimeMs =
-          new Date(existing.completedAt).getTime() - new Date(existing.startedAt).getTime();
-      }
+    const results = await this.store.results.read();
+    const exists = results.results.some((entry) => entry.userId === user.id);
+    if (!exists) {
+      await this.store.results.update((resultsFile: ResultsFile): ResultsFile => ({
+        ...resultsFile,
+        results: [
+          ...resultsFile.results,
+          {
+            id: randomUUID(),
+            userId: user.id,
+            displayName: user.displayName,
+            email: user.email,
+            finalGuess: normalized,
+            completedAt: finalProgress.completedAt ?? nowIso(),
+            startedAt: finalProgress.startedAt,
+            finalAnswerAttempts: finalProgress.finalAnswerAttempts,
+            totalSolved: finalProgress.solvedQuestions.length,
+            totalClues: finalProgress.unlockedClues.length,
+          } satisfies GameResult,
+        ],
+      }));
     }
 
     if (finalTimeMs === undefined) {
