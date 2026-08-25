@@ -94,7 +94,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
   router.post("/admin/questions/new", async (req, res, next) => {
     try {
       await adminService.createQuestion(req.currentUser, req.body ?? {});
-      res.redirect("/admin/questions");
+      res.redirect(303, "/admin/questions");
     } catch (error) {
       next(error);
     }
@@ -103,7 +103,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
   router.post("/admin/questions/:id/edit", async (req, res, next) => {
     try {
       await adminService.updateQuestion(req.currentUser, req.params.id, req.body ?? {});
-      res.redirect(`/admin/questions/${req.params.id}/edit`);
+      res.redirect(303, `/admin/questions/${req.params.id}/edit`);
     } catch (error) {
       next(error);
     }
@@ -113,7 +113,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
     try {
       const active = req.body?.active === "false" ? false : true;
       await adminService.toggleQuestionActive(req.currentUser, req.params.id, active);
-      res.redirect("/admin/questions");
+      res.redirect(303, "/admin/questions");
     } catch (error) {
       next(error);
     }
@@ -122,7 +122,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
   router.post("/admin/questions/:id/delete", async (req, res, next) => {
     try {
       await adminService.deleteQuestion(req.currentUser, req.params.id, req.body?.confirm);
-      res.redirect("/admin/questions");
+      res.redirect(303, "/admin/questions");
     } catch (error) {
       next(error);
     }
@@ -131,7 +131,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
   router.post("/admin/questions/reorder", async (req, res, next) => {
     try {
       await adminService.reorderQuestions(req.currentUser, req.body ?? {});
-      res.redirect("/admin/questions");
+      res.redirect(303, "/admin/questions");
     } catch (error) {
       next(error);
     }
@@ -158,7 +158,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
   router.post("/admin/settings", async (req, res, next) => {
     try {
       await adminService.updateGameSettings(req.currentUser, req.body ?? {});
-      res.redirect("/admin/settings");
+      res.redirect(303, "/admin/settings");
     } catch (error) {
       next(error);
     }
@@ -197,7 +197,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
   router.post("/admin/participants/:id/reset", async (req, res, next) => {
     try {
       await adminService.resetParticipant(req.currentUser, req.params.id, req.body?.confirm);
-      res.redirect(`/admin/participants/${req.params.id}`);
+      res.redirect(303, `/admin/participants/${req.params.id}`);
     } catch (error) {
       next(error);
     }
@@ -286,7 +286,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
       const source = req.body?.payload ?? req.body;
       const parsed = typeof source === "string" ? JSON.parse(source) : source;
       await adminService.importQuestions(req.currentUser, parsed);
-      res.redirect("/admin/archive");
+      res.redirect(303, "/admin/archive");
     } catch (error: unknown) {
       if (error instanceof SyntaxError) {
         const validation = ensureHttpError(error, "Invalid JSON.", 400);
@@ -323,7 +323,7 @@ const createAdminRoutes = (adminService: AdminService): Router => {
   router.post("/admin/game-reset", async (req, res, next) => {
     try {
       await adminService.resetGame(req.currentUser, req.body?.confirm);
-      res.redirect("/admin");
+      res.redirect(303, "/admin");
     } catch (error) {
       next(error);
     }

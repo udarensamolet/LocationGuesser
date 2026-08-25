@@ -17,7 +17,7 @@ export const createGameRoutes = (gameService: GameService) => {
     try {
       const currentUser = req.currentUser;
       await gameService.startGameForUser(currentUser);
-      res.redirect("/game");
+      res.redirect(303, "/game");
     } catch (error) {
       next(asError(error, "Failed to start the game."));
     }

@@ -39,7 +39,7 @@ export const createCoreRoutes = (gameService: GameService) => {
     }
 
     res.setHeader("Set-Cookie", createSessionCookie(name));
-    res.redirect("/");
+    res.redirect(303, "/");
   });
 
   router.get("/logout", (_req, res) => {
