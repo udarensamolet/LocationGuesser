@@ -381,14 +381,7 @@ export const createCurrentUserMiddleware = (config: AppConfig): RequestHandler =
 
 export const requireAdmin: RequestHandler = (req, res, next) => {
   if (!req.currentUser || !req.currentUser.isAdmin) {
-    res.status(403).render("layouts/base", {
-      title: "Access denied",
-      statusCode: 403,
-      message: "This route requires administrator permissions.",
-      currentUser: req.currentUser,
-      content: "pages/error",
-      pageTitle: "Access denied",
-    });
+    res.redirect("/");
     return;
   }
 
