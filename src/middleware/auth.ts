@@ -38,11 +38,11 @@ if ((process.env.NODE_ENV ?? "").toLowerCase() === "production" && !process.env.
   console.warn("AUTH_SESSION_SECRET is not configured; using the built-in fallback secret.");
 }
 
-export const normalizeLoginEmail = (value: unknown): string =>
+export const normalizeLoginName = (value: unknown): string =>
   typeof value === "string" ? value.trim().toLowerCase() : "";
 
-export const isValidLoginEmail = (email: string): boolean =>
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+export const isValidLoginName = (name: string): boolean =>
+  /^[\p{L}\p{M}0-9][\p{L}\p{M}0-9 .'-]{1,79}$/u.test(name);
 
 const signSessionValue = (value: string): string =>
   createHmac("sha256", sessionSecret).update(value).digest("base64url");
@@ -50,9 +50,9 @@ const signSessionValue = (value: string): string =>
 const isSecureRequest = (): boolean =>
   (process.env.NODE_ENV ?? "").toLowerCase() === "production" || process.env.VERCEL === "1";
 
-export const createSessionCookie = (email: string): string => {
-  const encodedEmail = Buffer.from(email, "utf8").toString("base64url");
-  const value = `${encodedEmail}.${signSessionValue(encodedEmail)}`;
+export const createSessionCookie = (name: string): string => {
+  const encodedName = Buffer.from(name, "utf8").toString("base64url");
+  const value = `${encodedName}.${signSessionValue(encodedName)}`;
   const secureFlag = isSecureRequest() ? "; Secure" : "";
 
   return `${AUTH_COOKIE_NAME}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${SESSION_MAX_AGE_SECONDS}${secureFlag}`;
@@ -79,14 +79,14 @@ const readCookie = (req: Request, cookieName: string): string => {
   return "";
 };
 
-const getSessionEmail = (req: Request): string => {
+const getSessionName = (req: Request): string => {
   const rawValue = readCookie(req, AUTH_COOKIE_NAME);
   const separator = rawValue.indexOf(".");
   if (separator === -1) return "";
 
-  const encodedEmail = rawValue.slice(0, separator);
+  const encodedName = rawValue.slice(0, separator);
   const providedSignature = rawValue.slice(separator + 1);
-  const expectedSignature = signSessionValue(encodedEmail);
+  const expectedSignature = signSessionValue(encodedName);
   const providedBuffer = Buffer.from(providedSignature, "utf8");
   const expectedBuffer = Buffer.from(expectedSignature, "utf8");
 
@@ -98,8 +98,8 @@ const getSessionEmail = (req: Request): string => {
   }
 
   try {
-    const email = normalizeLoginEmail(Buffer.from(encodedEmail, "base64url").toString("utf8"));
-    return isValidLoginEmail(email) ? email : "";
+    const name = normalizeLoginName(Buffer.from(encodedName, "base64url").toString("utf8"));
+    return isValidLoginName(name) ? name : "";
   } catch (_error) {
     return "";
   }
@@ -108,11 +108,11 @@ const getSessionEmail = (req: Request): string => {
 const isAdminEmail = (email: string, adminEmails: string[]): boolean =>
   adminEmails.includes(email.trim().toLowerCase());
 
-const createEmailUser = (email: string, adminEmails: string[]): AppUser => ({
-  id: email,
-  email,
-  displayName: email,
-  isAdmin: isAdminEmail(email, adminEmails),
+const createNameUser = (name: string, adminEmails: string[]): AppUser => ({
+  id: name,
+  email: name,
+  displayName: name,
+  isAdmin: isAdminEmail(name, adminEmails),
 });
 
 const toText = (value: string | null | undefined): string =>
@@ -342,9 +342,9 @@ const resolveHeaderPrincipal = (req: Request, adminEmailList: string[]): AppUser
 
 const resolveAuthenticatedUser = (config: AppConfig): ((req: Request) => AppUser) => {
   return (req: Request): AppUser => {
-    const sessionEmail = getSessionEmail(req);
-    if (sessionEmail) {
-      return createEmailUser(sessionEmail, config.adminEmails);
+    const sessionName = getSessionName(req);
+    if (sessionName) {
+      return createNameUser(sessionName, config.adminEmails);
     }
 
     if (config.devAuthBypass) {

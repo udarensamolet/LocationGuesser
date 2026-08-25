@@ -2,8 +2,8 @@ import { Router } from "express";
 import {
   clearSessionCookie,
   createSessionCookie,
-  isValidLoginEmail,
-  normalizeLoginEmail,
+  isValidLoginName,
+  normalizeLoginName,
 } from "../middleware/auth.js";
 import { GameService } from "../services/gameService.js";
 
@@ -25,9 +25,9 @@ export const createCoreRoutes = (gameService: GameService) => {
   });
 
   router.post("/login", (req, res) => {
-    const email = normalizeLoginEmail(req.body?.email);
+    const name = normalizeLoginName(req.body?.name);
 
-    if (!isValidLoginEmail(email)) {
+    if (!isValidLoginName(name)) {
       res.status(400).render("layouts/base", {
         title: "Log in",
         pageTitle: "Log in to the game",
@@ -38,7 +38,7 @@ export const createCoreRoutes = (gameService: GameService) => {
       return;
     }
 
-    res.setHeader("Set-Cookie", createSessionCookie(email));
+    res.setHeader("Set-Cookie", createSessionCookie(name));
     res.redirect("/");
   });
 
