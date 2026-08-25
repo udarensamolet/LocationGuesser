@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { GameService } from "../services/gameService.js";
+import { ANONYMOUS_USER } from "../models/user.js";
 
 const asError = (error: unknown, fallback: string): Error & { status?: number } => {
   if (error instanceof Error) {
@@ -26,7 +27,12 @@ export const createGameRoutes = (gameService: GameService) => {
   router.get("/game", async (req, res, next) => {
     try {
       const currentUser = req.currentUser;
-      const progress = await gameService.getProgressPayload(currentUser);
+      let progress = await gameService.getProgressPayload(currentUser);
+      if (currentUser.id !== ANONYMOUS_USER.id && !progress?.hasStarted) {
+        await gameService.startGameForUser(currentUser);
+        progress = await gameService.getProgressPayload(currentUser);
+      }
+
       const question = await gameService.getCurrentQuestion(currentUser);
       const totalQuestions = await gameService.getQuestionCount();
 
@@ -75,8 +81,13 @@ export const createGameRoutes = (gameService: GameService) => {
 
   router.get("/api/game/question", async (req, res, next) => {
     try {
+      let progress = await gameService.getProgressPayload(req.currentUser);
+      if (req.currentUser.id !== ANONYMOUS_USER.id && !progress?.hasStarted) {
+        await gameService.startGameForUser(req.currentUser);
+        progress = await gameService.getProgressPayload(req.currentUser);
+      }
+
       const question = await gameService.getCurrentQuestion(req.currentUser);
-      const progress = await gameService.getProgressPayload(req.currentUser);
 
       if (!question) {
         res.json({
