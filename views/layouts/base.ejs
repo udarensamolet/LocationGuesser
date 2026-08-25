@@ -26,10 +26,11 @@
         const renderMessage = typeof message === "string" ? message : "An unexpected error occurred.";
       %>
       <%- include(`../${content}`, {
-        currentUser,
-        statusCode: renderStatusCode,
-        message: renderMessage,
-      }) %>
+      currentUser,
+      statusCode: renderStatusCode,
+      message: renderMessage,
+      loginError: typeof loginError === "string" ? loginError : "",
+    }) %>
     </section>
   </main>
   <%- include("../partials/footer") %>

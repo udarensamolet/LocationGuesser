@@ -33,7 +33,7 @@ export const createCoreRoutes = (gameService: GameService) => {
         pageTitle: "Log in to the game",
         content: "pages/login",
         currentUser: req.currentUser,
-        message: "Please enter a valid email address.",
+        loginError: "Please enter a valid name.",
       });
       return;
     }

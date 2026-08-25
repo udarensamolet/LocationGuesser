@@ -2,8 +2,8 @@
   <h2>Enter your name to begin</h2>
   <p>Use your name so your progress, completion time, and result are recorded correctly.</p>
 
-  <% if (message) { %>
-    <p class="message error"><%= message %></p>
+  <% if (loginError) { %>
+    <p class="message error"><%= loginError %></p>
   <% } %>
 
   <form method="POST" action="/login" class="form-grid">
@@ -11,6 +11,4 @@
     <input id="name" name="name" type="text" autocomplete="name" maxlength="80" required autofocus />
     <button class="btn" type="submit">Continue</button>
   </form>
-
-  <p class="section-subtitle">This game login identifies you by the email address you enter. It does not use your browser or Microsoft account login.</p>
 </section>
