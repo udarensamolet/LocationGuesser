@@ -25,6 +25,8 @@ const formatDuration = (milliseconds) => {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 };
 
+const MAX_FINAL_ANSWER_ATTEMPTS = 10;
+
 const getCompletionTimeMs = () => {
   if (!state.completedAt || !state.startedAt) {
     return null;
@@ -176,17 +178,28 @@ const renderTimer = () => {
   }
 
   const started = new Date(state.startedAt).getTime();
+  if (!Number.isFinite(started)) {
+    target.textContent = "00:00";
+    return;
+  }
 
-  const update = () => {
-    const diff = Math.max(0, Math.floor((Date.now() - started) / 1000));
+  const renderElapsed = (nowMs) => {
+    const diff = Math.max(0, Math.floor((nowMs - started) / 1000));
     const mins = Math.floor(diff / 60);
     const secs = diff % 60;
     target.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
   };
 
-  update();
   if (timerHandle) clearInterval(timerHandle);
-  timerHandle = setInterval(update, 1000);
+
+  if (state.completedAt) {
+    const completedAt = new Date(state.completedAt).getTime();
+    renderElapsed(Number.isFinite(completedAt) ? completedAt : Date.now());
+    return;
+  }
+
+  renderElapsed(Date.now());
+  timerHandle = setInterval(() => renderElapsed(Date.now()), 1000);
 };
 
 const renderQuestion = () => {
@@ -212,6 +225,26 @@ const renderQuestion = () => {
     } else {
       finalForm.classList.remove("hidden");
       finalSuccess.classList.add("hidden");
+
+      const finalSubmit = finalForm.querySelector("button[type='submit']");
+      const finalAnswerInput = finalForm.querySelector("#final-answer");
+      const limitReached = state.finalAnswerAttempts >= MAX_FINAL_ANSWER_ATTEMPTS;
+      if (finalSubmit) finalSubmit.disabled = limitReached;
+      if (finalAnswerInput) finalAnswerInput.disabled = limitReached;
+
+      let statusText = finalForm.querySelector("[data-final-attempt-status]");
+      if (!statusText) {
+        statusText = document.createElement("p");
+        statusText.className = "field-hint";
+        statusText.dataset.finalAttemptStatus = "";
+        finalForm.appendChild(statusText);
+      }
+      statusText.dataset.finalAttemptStatus = "";
+      statusText.textContent = `Final answer attempts: ${state.finalAnswerAttempts}/${MAX_FINAL_ANSWER_ATTEMPTS}`;
+
+      if (limitReached) {
+        setFeedback("No final attempts remaining. Contact admin if you need to reset attempts.", "error");
+      }
     }
     return;
   }
@@ -398,6 +431,11 @@ const initFinalGuess = () => {
     const answer = safeText(input?.value);
     if (!answer) {
       setFeedback("Enter your location guess.", "warning");
+      return;
+    }
+
+    if (state.finalAnswerAttempts >= MAX_FINAL_ANSWER_ATTEMPTS) {
+      setFeedback("You have reached the maximum number of final attempts (10).", "error");
       return;
     }
 

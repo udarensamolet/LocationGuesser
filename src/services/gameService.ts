@@ -58,11 +58,14 @@ export interface AnswerResult {
 
 export interface FinalAnswerResult {
   correct: boolean;
+  maxAttemptsReached?: boolean;
+  attemptsLeft?: number;
   message: string;
   finalTimeMs?: number;
 }
 
 const nowIso = () => new Date().toISOString();
+const MAX_FINAL_ANSWER_ATTEMPTS = 10;
 
 const normalizeText = (value: unknown): string =>
   normalizeTextInput(typeof value === "string" ? value : "");
@@ -563,6 +566,7 @@ export class GameService {
 
     let finalCorrect = false;
     let alreadyCompleted = false;
+    let maxAttemptsReached = false;
     let finalTimeMs: number | undefined;
 
     await this.store.progress.update((file: ProgressFile): ProgressFile => {
@@ -570,6 +574,11 @@ export class GameService {
       if (currentProgress.finalCorrectAt) {
         finalCorrect = true;
         alreadyCompleted = true;
+        return file;
+      }
+
+      if (currentProgress.finalAnswerAttempts >= MAX_FINAL_ANSWER_ATTEMPTS) {
+        maxAttemptsReached = true;
         return file;
       }
 
@@ -589,8 +598,31 @@ export class GameService {
     });
 
     if (!finalCorrect) {
+      if (alreadyCompleted) {
+        return {
+          correct: false,
+          maxAttemptsReached: false,
+          attemptsLeft: 0,
+          message: "This mission has already been completed.",
+        };
+      }
+
+      if (maxAttemptsReached) {
+        return {
+          correct: false,
+          maxAttemptsReached: true,
+          attemptsLeft: 0,
+          message: `You have reached the maximum number of final attempts (${MAX_FINAL_ANSWER_ATTEMPTS}).`,
+        };
+      }
+
+      const currentProgress = await this.store.progress.read();
       return {
         correct: false,
+        attemptsLeft: Math.max(
+          0,
+          MAX_FINAL_ANSWER_ATTEMPTS - (currentProgress.users[user.id]?.finalAnswerAttempts ?? 0),
+        ),
         message: "That is not the correct answer for the location.",
       };
     }
