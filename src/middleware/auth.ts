@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, RequestHandler } from "express";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { AppUser, ANONYMOUS_USER } from "../models/user.js";
 import { AppConfig } from "../services/config.js";
 
@@ -29,8 +30,90 @@ type JwtPayload = {
   [key: string]: unknown;
 };
 
+const AUTH_COOKIE_NAME = "location_guesser_session";
+const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
+const sessionSecret = process.env.AUTH_SESSION_SECRET ?? "location-guesser-local-session-secret";
+
+if ((process.env.NODE_ENV ?? "").toLowerCase() === "production" && !process.env.AUTH_SESSION_SECRET) {
+  console.warn("AUTH_SESSION_SECRET is not configured; using the built-in fallback secret.");
+}
+
+export const normalizeLoginEmail = (value: unknown): string =>
+  typeof value === "string" ? value.trim().toLowerCase() : "";
+
+export const isValidLoginEmail = (email: string): boolean =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+const signSessionValue = (value: string): string =>
+  createHmac("sha256", sessionSecret).update(value).digest("base64url");
+
+const isSecureRequest = (): boolean =>
+  (process.env.NODE_ENV ?? "").toLowerCase() === "production" || process.env.VERCEL === "1";
+
+export const createSessionCookie = (email: string): string => {
+  const encodedEmail = Buffer.from(email, "utf8").toString("base64url");
+  const value = `${encodedEmail}.${signSessionValue(encodedEmail)}`;
+  const secureFlag = isSecureRequest() ? "; Secure" : "";
+
+  return `${AUTH_COOKIE_NAME}=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${SESSION_MAX_AGE_SECONDS}${secureFlag}`;
+};
+
+export const clearSessionCookie = (): string => {
+  const secureFlag = isSecureRequest() ? "; Secure" : "";
+  return `${AUTH_COOKIE_NAME}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureFlag}`;
+};
+
+const readCookie = (req: Request, cookieName: string): string => {
+  const cookieHeader = req.header("cookie") ?? "";
+
+  for (const part of cookieHeader.split(";")) {
+    const separator = part.indexOf("=");
+    if (separator === -1) continue;
+
+    const name = part.slice(0, separator).trim();
+    if (name === cookieName) {
+      return part.slice(separator + 1).trim();
+    }
+  }
+
+  return "";
+};
+
+const getSessionEmail = (req: Request): string => {
+  const rawValue = readCookie(req, AUTH_COOKIE_NAME);
+  const separator = rawValue.indexOf(".");
+  if (separator === -1) return "";
+
+  const encodedEmail = rawValue.slice(0, separator);
+  const providedSignature = rawValue.slice(separator + 1);
+  const expectedSignature = signSessionValue(encodedEmail);
+  const providedBuffer = Buffer.from(providedSignature, "utf8");
+  const expectedBuffer = Buffer.from(expectedSignature, "utf8");
+
+  if (
+    providedBuffer.length !== expectedBuffer.length ||
+    !timingSafeEqual(providedBuffer, expectedBuffer)
+  ) {
+    return "";
+  }
+
+  try {
+    const email = normalizeLoginEmail(Buffer.from(encodedEmail, "base64url").toString("utf8"));
+    return isValidLoginEmail(email) ? email : "";
+  } catch (_error) {
+    return "";
+  }
+};
+
 const isAdminEmail = (email: string, adminEmails: string[]): boolean =>
   adminEmails.includes(email.trim().toLowerCase());
+
+const createEmailUser = (email: string, adminEmails: string[]): AppUser => ({
+  id: email,
+  email,
+  displayName: email,
+  isAdmin: isAdminEmail(email, adminEmails),
+});
 
 const toText = (value: string | null | undefined): string =>
   typeof value === "string" ? value.trim() : "";
@@ -258,8 +341,13 @@ const resolveHeaderPrincipal = (req: Request, adminEmailList: string[]): AppUser
 };
 
 const resolveAuthenticatedUser = (config: AppConfig): ((req: Request) => AppUser) => {
-  if (config.devAuthBypass) {
-    return () => {
+  return (req: Request): AppUser => {
+    const sessionEmail = getSessionEmail(req);
+    if (sessionEmail) {
+      return createEmailUser(sessionEmail, config.adminEmails);
+    }
+
+    if (config.devAuthBypass) {
       const email = config.devUserEmail;
       return {
         id: config.devUserId,
@@ -267,10 +355,8 @@ const resolveAuthenticatedUser = (config: AppConfig): ((req: Request) => AppUser
         displayName: config.devUserName,
         isAdmin: isAdminEmail(email, config.adminEmails),
       };
-    };
-  }
+    }
 
-  return (req: Request): AppUser => {
     const principal = resolveHeaderPrincipal(req, config.adminEmails);
     if (!principal || (!principal.id && !principal.email)) {
       return ANONYMOUS_USER;

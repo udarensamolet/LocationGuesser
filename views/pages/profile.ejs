@@ -1,0 +1,12 @@
+<section class="panel-mini">
+  <% if (currentUser.id === "anonymous") { %>
+    <h2>You are not logged in</h2>
+    <p>Log in with your work email before starting the mission.</p>
+    <a class="btn" href="/login">Log in</a>
+  <% } else { %>
+    <h2><%= currentUser.displayName %></h2>
+    <p><strong>Email:</strong> <%= currentUser.email %></p>
+    <p><strong>Administrator:</strong> <%= currentUser.isAdmin ? "Yes" : "No" %></p>
+    <a class="btn" href="/logout">Log out</a>
+  <% } %>
+</section>
